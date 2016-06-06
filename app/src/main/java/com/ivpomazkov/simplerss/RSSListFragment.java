@@ -48,6 +48,11 @@ public class RSSListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("info","list->onCreate()");
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -59,7 +64,6 @@ public class RSSListFragment extends Fragment {
         };
         IntentFilter intentFilter = new IntentFilter(RSSActivity.UPDATE_ACTION);
         getActivity().registerReceiver(mBroadcastReceiver, intentFilter);
-
     }
 
     @Override
@@ -89,6 +93,12 @@ public class RSSListFragment extends Fragment {
         super.onResume();
         Log.d("info","list->onResume()");
         updateUI();
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        getActivity().unregisterReceiver(mBroadcastReceiver);
     }
 
     private void updateUI(){
