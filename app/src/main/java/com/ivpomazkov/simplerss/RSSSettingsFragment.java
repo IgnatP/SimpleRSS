@@ -48,11 +48,14 @@ public class RSSSettingsFragment extends Fragment {
     }
 
     public void updateUI() {
+        Log.d("info","settings on updateUI new");
         if (mAdapter == null) {
             mAdapter = new ChannelRVAdapter(mRSSChannelList.getChannels());
             mRecyclerView.setAdapter(mAdapter);
 
         } else {
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.setChannels(mRSSChannelList.getChannels());
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -131,6 +134,8 @@ public class RSSSettingsFragment extends Fragment {
         private List<RSSChannel> mChannels;
 
         public ChannelRVAdapter(List<RSSChannel> channels){ mChannels = channels; }
+
+        public void setChannels(List<RSSChannel> channels) {mChannels = channels;}
 
         @Override
         public ChannelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

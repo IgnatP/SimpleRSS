@@ -15,7 +15,7 @@ public class NewsList {
     private static NewsList sNewsList;
     private List<NewsItem> mNews;
 
-    public static NewsList get(Context context){
+    public static synchronized NewsList get(Context context){
         if (sNewsList == null)
             sNewsList = new NewsList(context);
          return sNewsList;
