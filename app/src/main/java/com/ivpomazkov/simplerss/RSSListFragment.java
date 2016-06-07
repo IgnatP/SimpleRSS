@@ -83,15 +83,14 @@ public class RSSListFragment extends Fragment {
         });
         mRecyclerView = (RecyclerView) view.findViewById(R.id.news_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        NewsList nl = NewsList.get(getActivity());
-        news = nl.getNews();
+
+       // updateUI();
         return view;
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        Log.d("info","list->onResume()");
         updateUI();
     }
 
@@ -102,10 +101,16 @@ public class RSSListFragment extends Fragment {
     }
 
     private void updateUI(){
+        Log.d("info", "List on updateUI() new");
+        NewsList nl = NewsList.get(getActivity());
+        news = nl.getNews();
         if (mAdapter == null) {
             mAdapter = new RSSListRecyclerViewAdapter(news);
             mRecyclerView.setAdapter(mAdapter);
+            Log.d("info","adapter created");
         } else {
+            Log.d("info", "mAdapter != null");
+            mRecyclerView.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
         }
 

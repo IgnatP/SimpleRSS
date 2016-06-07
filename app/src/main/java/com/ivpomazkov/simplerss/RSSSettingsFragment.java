@@ -47,14 +47,13 @@ public class RSSSettingsFragment extends Fragment {
         return view;
     }
 
-    public void updateUI(){
-        if (mAdapter == null){
+    public void updateUI() {
+        if (mAdapter == null) {
             mAdapter = new ChannelRVAdapter(mRSSChannelList.getChannels());
             mRecyclerView.setAdapter(mAdapter);
-            Log.d("info", "adaptercreated");
+
         } else {
             mAdapter.notifyDataSetChanged();
-            Log.d("info", "datasetchanged");
         }
     }
 
@@ -62,7 +61,6 @@ public class RSSSettingsFragment extends Fragment {
     public void onResume(){
         super.onResume();
         updateUI();
-        Log.d("info", "onResume");
     }
 
     @Override
@@ -98,7 +96,6 @@ public class RSSSettingsFragment extends Fragment {
                     channel.setDescription(temp);
                     channel.setActive(false);
                     mRSSChannelList.addChannel(channel);
-                    Log.d("info", channel.toString());
                     updateUI();
                 }
                 break;
