@@ -14,11 +14,12 @@ public class NewsItem {
     private Date pubDate;
 
     public NewsItem(){
-        id = UUID.randomUUID();
-        title = "title";
-        description = "description";
-        link = "http://news.tut.by/economics/498655.html?utm_campaign=news-feed&#x26;utm_medium=rss&#x26;utm_source=rss-news";
-        pubDate = new Date(2015,12,12);
+        this(UUID.randomUUID());
+    }
+
+    public NewsItem(UUID uuid){
+        id = uuid;
+        pubDate = new Date();
     }
 
     public NewsItem(String descr){
@@ -65,7 +66,4 @@ public class NewsItem {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
 }

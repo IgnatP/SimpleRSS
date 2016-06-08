@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,7 +30,7 @@ public class RSSListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RSSListRecyclerViewAdapter mAdapter;
-    private List<NewsItem> news;
+    private List<NewsItem> mNewsItemList;
     private BroadcastReceiver mBroadcastReceiver;
 
 
@@ -56,7 +55,7 @@ public class RSSListFragment extends Fragment {
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("info", "intent received");
+                Log.d("info", "intent UPDATE_ACTION received");
                 boolean readyToUpdate = intent.getBooleanExtra(RSSGetter.READY_TO_UPDATE,false);
                 if (readyToUpdate)
                     updateUI();
@@ -75,7 +74,6 @@ public class RSSListFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d("info", "onRefresh");
                 Intent intent = new Intent(getActivity(), RSSGetter.class);
                 getActivity().startService(intent);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -83,8 +81,6 @@ public class RSSListFragment extends Fragment {
         });
         mRecyclerView = (RecyclerView) view.findViewById(R.id.news_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-       // updateUI();
         return view;
     }
 
@@ -101,16 +97,15 @@ public class RSSListFragment extends Fragment {
     }
 
     private void updateUI(){
-        Log.d("info", "List on updateUI() new");
         NewsList nl = NewsList.get(getActivity());
-        news = nl.getNews();
+        mNewsItemList = nl.getNews();
         if (mAdapter == null) {
-            mAdapter = new RSSListRecyclerViewAdapter(news);
+            mAdapter = new RSSListRecyclerViewAdapter(mNewsItemList);
             mRecyclerView.setAdapter(mAdapter);
-            Log.d("info","adapter created");
         } else {
-            Log.d("info", "mAdapter != null");
             mRecyclerView.setAdapter(mAdapter);
+            mAdapter.setNewsList(mNewsItemList);
+            Log.d("info", "size of newsList" + mNewsItemList.size());
             mAdapter.notifyDataSetChanged();
         }
 
@@ -155,11 +150,12 @@ public class RSSListFragment extends Fragment {
 
     private class RSSListRecyclerViewAdapter extends  RecyclerView.Adapter<RSSListRecyclerViewHolder>{
 
-        List<NewsItem> mNewsList;
+        private List<NewsItem> mNewsList;
 
         public RSSListRecyclerViewAdapter(List<NewsItem> newsList){
             mNewsList = newsList;
         }
+        public void setNewsList(List<NewsItem> newsList) {mNewsList = newsList; }
 
         @Override
         public RSSListRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

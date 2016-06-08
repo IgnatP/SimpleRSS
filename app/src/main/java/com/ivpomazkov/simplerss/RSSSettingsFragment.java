@@ -127,6 +127,7 @@ public class RSSSettingsFragment extends Fragment {
         public void onClick(View v) {
             Log.d("info", "clicked on " + mChannel.getUrl());
             mChannel.setActive(mUrlSelected.isChecked());
+            mRSSChannelList.updateChannel(mChannel);
         }
     }
 

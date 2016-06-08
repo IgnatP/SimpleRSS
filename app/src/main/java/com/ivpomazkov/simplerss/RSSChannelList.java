@@ -29,7 +29,6 @@ public class RSSChannelList {
         return sRSSChannelList;
     }
     public void addChannel(RSSChannel channel){
-        //mChannels.add(channel);
         ContentValues values = getContentValues(channel);
         mDatabase.insert(RSSChannelsTable.NAME, null, values);
     }
@@ -38,6 +37,7 @@ public class RSSChannelList {
         String urlId = channel.getUrl();
         ContentValues values = getContentValues(channel);
         mDatabase.update(RSSChannelsTable.NAME, values, RSSChannelsTable.RSSChannelsColumns.URL + " = ?", new String[] {urlId});
+        Log.d("info", "channel updated " + channel.getDescription() + ", URL " + channel.getUrl() + ", " + channel.isActive().toString());
     }
 
     public List<RSSChannel> getChannels(){
@@ -47,8 +47,6 @@ public class RSSChannelList {
             cursor.moveToFirst();
             while(!cursor.isAfterLast()){
                 mChannels.add(cursor.getChannel());
-                Log.d("info",cursor.getChannel().getDescription());
-                Log.d("info",cursor.getChannel().isActive().toString());
                 cursor.moveToNext();
             }
         } finally{
@@ -59,20 +57,16 @@ public class RSSChannelList {
 
     public List<String> getActiveURLs() {
        List<String> urls = new ArrayList<>();
-       RSSChannelCursorWrapper cursor = queryChannels(RSSChannelsTable.RSSChannelsColumns.ISACTIVE + " = 1", null);
+        RSSChannelCursorWrapper cursor = queryChannels(RSSChannelsTable.RSSChannelsColumns.ISACTIVE + " = 1", null);
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 urls.add(cursor.getChannel().getUrl());
-                Log.d("info", "active URL: " + cursor.getChannel().getUrl());
+                cursor.moveToNext();
             }
         } finally {
             cursor.close();
         }
-        /* for (RSSChannel channel : mChannels){
-            if ( channel.isActive() )
-                urls.add(channel.getUrl());
-        }*/
         return urls;
     }
 
@@ -80,15 +74,6 @@ public class RSSChannelList {
         mChannels = new ArrayList<>();
         mContext = context;
         mDatabase = new RSSChannelDbHelper(mContext).getWritableDatabase();
-        /*for (int i = 0; i < 10; i++){
-            RSSChannel channel = new RSSChannel();
-            String s = "url# " + i;
-            channel.setUrl(s);
-            s = "description# " + i;
-            channel.setDescription(s);
-            channel.setActive(i % 2 == 0);
-            mChannels.add(channel);
-        }*/
     }
 
     private RSSChannelCursorWrapper queryChannels(String whereClause, String[] whereArgs){

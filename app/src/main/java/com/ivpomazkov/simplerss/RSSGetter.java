@@ -40,9 +40,9 @@ public class RSSGetter extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-                List<NewsItem> ni = NewsList.get(getApplicationContext()).getNews();
+                NewsList newsList = NewsList.get(getApplicationContext());
                 List<String> activeURLs = RSSChannelList.get(getApplicationContext()).getActiveURLs();
+                Log.d("info", "active urls received, " + activeURLs.size());
                 String rssString = "";
                 for (String rssUrl : activeURLs) {
                     //!!get rssString from web
@@ -72,12 +72,12 @@ public class RSSGetter extends Service {
                     } catch (SAXException e) {
                         e.printStackTrace();
                     }
-
-                    ni.addAll(itemList);
+                    Log.d("info", "adding news to database, news count = " + itemList.size());
+                    newsList.addNews(itemList);
                 }
                 Intent intent = new Intent(RSSActivity.UPDATE_ACTION);
                 intent.putExtra(RSSGetter.READY_TO_UPDATE,true);
-                Log.d("infoService", "intent sent new");
+                Log.d("info", "intent UPDATE_ACTION sent");
                 sendBroadcast(intent);
             }
         }).start();
@@ -113,13 +113,13 @@ public class RSSGetter extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("infoService", "Service->onBind()");
+        Log.d("info", "Service->onBind()");
         return null;
     }
 
     @Override
     public void onCreate(){
-        Log.d("infoService", "Service->onCreate()");
+        Log.d("info", "Service->onCreate()");
         mURLs = RSSChannelList.get(getApplicationContext()).getActiveURLs();
     }
 
@@ -130,7 +130,7 @@ public class RSSGetter extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
-        Log.d("infoService", "Service->onStartCommand()");
+        Log.d("info", "Service->onStartCommand()");
         getNews();
         return super.onStartCommand(intent, flags, startId);
     }
