@@ -6,7 +6,7 @@ import java.util.UUID;
 /**
  * Created by Ivpomazkov on 01.06.2016.
  */
-public class NewsItem {
+public class NewsItem implements Comparable<NewsItem>{
     private UUID id;
     private String title;
     private String description;
@@ -26,8 +26,8 @@ public class NewsItem {
         id = UUID.randomUUID();
         title = "title";
         description = descr;
-        link = "http://news.tut.by/economics/498655.html?utm_campaign=news-feed&#x26;utm_medium=rss&#x26;utm_source=rss-news";
-        pubDate = new Date(2015,12,12);
+        link = "link";
+        pubDate = new Date();
     }
 
     public String getTitle() {
@@ -66,4 +66,18 @@ public class NewsItem {
         return id;
     }
 
+    @Override
+    public boolean equals(Object o){
+        return o instanceof NewsItem &&
+                title.equals(((NewsItem)o).getTitle()) &&
+                pubDate.equals( ((NewsItem)o).getPubDate() );
+    }
+
+    @Override
+    public int compareTo(NewsItem another) {
+        if ( title.equals(another.getTitle()) && pubDate.equals(another.getPubDate()))
+            return 0;
+        else
+            return another.getPubDate().compareTo(pubDate);
+    }
 }

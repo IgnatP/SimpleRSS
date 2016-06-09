@@ -48,7 +48,6 @@ public class RSSSettingsFragment extends Fragment {
     }
 
     public void updateUI() {
-        Log.d("info","settings on updateUI new");
         if (mAdapter == null) {
             mAdapter = new ChannelRVAdapter(mRSSChannelList.getChannels());
             mRecyclerView.setAdapter(mAdapter);
@@ -125,7 +124,6 @@ public class RSSSettingsFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Log.d("info", "clicked on " + mChannel.getUrl());
             mChannel.setActive(mUrlSelected.isChecked());
             mRSSChannelList.updateChannel(mChannel);
         }

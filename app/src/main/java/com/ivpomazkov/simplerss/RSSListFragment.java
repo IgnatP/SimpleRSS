@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.TreeSet;
+import java.util.UUID;
 
 /**
  * Created by Ivpomazkov on 31.05.2016.
@@ -30,12 +32,17 @@ public class RSSListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RSSListRecyclerViewAdapter mAdapter;
+    private NewsList mNewsList;
     private List<NewsItem> mNewsItemList;
     private BroadcastReceiver mBroadcastReceiver;
 
 
     public interface ButtonSettingsPressed{
-        public void onButtonSettingsPressed();
+       void onButtonSettingsPressed();
+    }
+
+    public interface OpenNewsItem{
+        void onNewsItemPressed(UUID uuid);
     }
 
     public static RSSListFragment newInstance(){
@@ -47,6 +54,8 @@ public class RSSListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("info","list->onCreate()");
         setHasOptionsMenu(true);
+        mNewsList = NewsList.get(getActivity());
+        mNewsItemList = mNewsList.getNews(true);
     }
 
     @Override
@@ -94,11 +103,12 @@ public class RSSListFragment extends Fragment {
     public void onStop(){
         super.onStop();
         getActivity().unregisterReceiver(mBroadcastReceiver);
+        mNewsItemList = mNewsList.getNews(false);
+        mNewsList.addNews(mNewsItemList, true);
     }
 
     private void updateUI(){
-        NewsList nl = NewsList.get(getActivity());
-        mNewsItemList = nl.getNews();
+        mNewsItemList = mNewsList.getNews(false);
         if (mAdapter == null) {
             mAdapter = new RSSListRecyclerViewAdapter(mNewsItemList);
             mRecyclerView.setAdapter(mAdapter);
@@ -134,8 +144,9 @@ public class RSSListFragment extends Fragment {
         }
     }
 
-    private class RSSListRecyclerViewHolder extends RecyclerView.ViewHolder{
-
+    private class RSSListRecyclerViewHolder extends RecyclerView.ViewHolder
+    implements View.OnClickListener{
+        private NewsItem mNewsItem;
         private TextView mTitle;
         private TextView mDescription;
         private TextView mPubDate;
@@ -143,8 +154,25 @@ public class RSSListFragment extends Fragment {
         public RSSListRecyclerViewHolder(View itemView) {
             super(itemView);
             mTitle = (TextView) itemView.findViewById(R.id.news_item_title);
-            mDescription = (TextView) itemView.findViewById(R.id.news_item_description);
-            mPubDate = (TextView) itemView.findViewById(R.id.news_item_pubDate);
+            itemView.setOnClickListener(this);
+            //mDescription = (TextView) itemView.findViewById(R.id.news_item_description);
+            //mPubDate = (TextView) itemView.findViewById(R.id.news_item_pubDate);
+        }
+
+        public void bind(NewsItem newsItem){
+            mNewsItem = newsItem;
+            mTitle.setText(newsItem.getTitle());
+        }
+
+        @Override
+        public void onClick(View v) {
+            OpenNewsItem opener;
+            try{
+                opener = (OpenNewsItem) getActivity();
+                opener.onNewsItemPressed(mNewsItem.getId());
+            } catch (ClassCastException e){
+                Log.d("info",e.toString());
+            }
         }
     }
 
@@ -167,9 +195,9 @@ public class RSSListFragment extends Fragment {
         @Override
         public void onBindViewHolder(RSSListRecyclerViewHolder holder, int position) {
             NewsItem nItem = mNewsList.get(position);
-            holder.mTitle.setText(nItem.getTitle());
-            holder.mDescription.setText(nItem.getDescription());
-            holder.mPubDate.setText(nItem.getPubDate().toString());
+            holder.bind(nItem);
+            //holder.mDescription.setText(nItem.getDescription());
+            //holder.mPubDate.setText(nItem.getPubDate().toString());
         }
 
         @Override

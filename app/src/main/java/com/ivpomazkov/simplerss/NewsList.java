@@ -14,6 +14,7 @@ import com.ivpomazkov.simplerss.database.NewsDbSchema.NewsTable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.UUID;
 
 /**
@@ -21,7 +22,7 @@ import java.util.UUID;
  */
 public class NewsList {
     private static NewsList sNewsList;
-    private List<NewsItem> mNews;
+    private TreeSet<NewsItem> mNews;
     private SQLiteDatabase mDatabase;
     private Context mContext;
 
@@ -31,22 +32,24 @@ public class NewsList {
          return sNewsList;
     }
 
-    public List<NewsItem> getNews(){
-        NewsCursorWrapper cursorWrapper = queryNews(null, null);
-        Log.d("info", "trying to extract news from database");
-        mNews.clear();
-        try{
-           cursorWrapper.moveToFirst();
-            while(!cursorWrapper.isAfterLast()){
-                mNews.add(cursorWrapper.getNewsItem());
-                cursorWrapper.moveToNext();
-                Log.d("info", "newsItem extracted from database");
+    public List<NewsItem> getNews(boolean fromDb){
+        if (fromDb){
+            NewsCursorWrapper cursorWrapper = queryNews(null, null);
+            Log.d("info", "trying to extract news from database");
+            try{
+                cursorWrapper.moveToFirst();
+                while(!cursorWrapper.isAfterLast()){
+                    mNews.add(cursorWrapper.getNewsItem());
+                    cursorWrapper.moveToNext();
+                    }
+            } finally {
+                cursorWrapper.close();
             }
-        } finally {
-            cursorWrapper.close();
+            Log.d("info", "--" + mNews.size() + " news extracted from DB");
         }
-        Log.d("info", "returning lit containing " + mNews.size() + " news");
-        return mNews;
+        List<NewsItem> newsItems = new ArrayList<>(mNews);
+        Log.d("info", "--" + mNews.size() + " news extracted from memory");
+        return newsItems;
     }
 
     public NewsItem getNewsItem(UUID uuid){
@@ -62,18 +65,26 @@ public class NewsList {
         return item;
     }
 
-    public void addNewsItem(NewsItem newsItem){
-        ContentValues contentValues = getContentValues(newsItem);
-        mDatabase.insert(NewsTable.NAME,null,contentValues);
+    public void addNews(List<NewsItem> newsItems, boolean toDb){
+        String receiver = toDb ? "DB" : "memory";
+        Log.d("info", "adding " + newsItems.size() + " news to" + receiver);
+
+        for (NewsItem newsItem : newsItems)
+            addNewsItem(newsItem, toDb);
     }
 
-    public void addNews(List<NewsItem> newsItems){
-        for (NewsItem newsItem : newsItems)
-            addNewsItem(newsItem);
+    private void addNewsItem(NewsItem newsItem, boolean toDb){
+        if (toDb) {
+            ContentValues contentValues = getContentValues(newsItem);
+            mDatabase.insert(NewsTable.NAME, null, contentValues);
+        } else {
+            mNews.add(newsItem);
+        }
+
     }
 
     private NewsList(Context context){
-        mNews = new ArrayList<>();
+        mNews = new TreeSet<>();
         mContext = context;
         mDatabase = new NewsDbHelper(mContext).getWritableDatabase();
     }
@@ -100,6 +111,5 @@ public class NewsList {
         );
         return  new NewsCursorWrapper(cursor);
     }
-
 
 }

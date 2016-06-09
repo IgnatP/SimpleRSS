@@ -56,6 +56,7 @@ public class RSSGetter extends Service {
                         Log.d("info", "executing request to " + rssUrl);
                         Response response = client.newCall(request).execute();
                         rssString = response.body().string();
+                        Log.d("info","received rss string: " + rssString);
                     } catch (IOException e) {
                         Log.d("info", e.toString());
                     } catch (IllegalArgumentException e){
@@ -72,8 +73,8 @@ public class RSSGetter extends Service {
                     } catch (SAXException e) {
                         e.printStackTrace();
                     }
-                    Log.d("info", "adding news to database, news count = " + itemList.size());
-                    newsList.addNews(itemList);
+                    Log.d("info", "found some news = " + itemList.size());
+                    newsList.addNews(itemList, false);
                 }
                 Intent intent = new Intent(RSSActivity.UPDATE_ACTION);
                 intent.putExtra(RSSGetter.READY_TO_UPDATE,true);
