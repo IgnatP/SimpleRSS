@@ -48,7 +48,9 @@ public class NewsList {
             Log.d("info", "--" + mNews.size() + " news extracted from DB");
         }
         List<NewsItem> newsItems = new ArrayList<>(mNews);
-        Log.d("info", "--" + mNews.size() + " news extracted from memory");
+        if (!fromDb){
+            Log.d("info", "--" + mNews.size() + " news extracted from memory");
+        }
         return newsItems;
     }
 

@@ -5,13 +5,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 public class RSSActivity extends AppCompatActivity
 implements RSSListFragment.ButtonSettingsPressed,
             RSSListFragment.OpenNewsItem{
-    public static final String NEWS_ID = "news_id";
+   // public static final String NEWS_ID = "news_id";
     private final static String TAG = "RSS";
     private FragmentManager mFragmentManager;
     public static final String UPDATE_ACTION = "update_action";
@@ -44,8 +43,10 @@ implements RSSListFragment.ButtonSettingsPressed,
 
     @Override
     public void onNewsItemPressed(UUID uuid) {
-        Intent intent = new Intent(getApplicationContext(),NewsItemViewPagerActivity.class);
-        intent.putExtra(NEWS_ID, uuid);
-        startActivity(intent);
+        NewsItemViewPager newsItemFragment = NewsItemViewPager.newInstance(uuid);
+        mFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, newsItemFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

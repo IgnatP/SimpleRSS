@@ -131,7 +131,6 @@ public class RSSListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_item_settings:
-
                 try{
                     mButtonSettingsListener = (ButtonSettingsPressed) getActivity();
                     mButtonSettingsListener.onButtonSettingsPressed();
@@ -169,6 +168,7 @@ public class RSSListFragment extends Fragment {
             OpenNewsItem opener;
             try{
                 opener = (OpenNewsItem) getActivity();
+                Log.d("info", "Pressed on " + mNewsItem.getId());
                 opener.onNewsItemPressed(mNewsItem.getId());
             } catch (ClassCastException e){
                 Log.d("info",e.toString());
