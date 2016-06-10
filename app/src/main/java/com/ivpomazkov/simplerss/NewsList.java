@@ -22,6 +22,7 @@ import java.util.UUID;
  */
 public class NewsList {
     private static NewsList sNewsList;
+    private static final String TAG = "NEWS_LIST: ";
     private TreeSet<NewsItem> mNews;
     private SQLiteDatabase mDatabase;
     private Context mContext;
@@ -35,7 +36,7 @@ public class NewsList {
     public List<NewsItem> getNews(boolean fromDb){
         if (fromDb){
             NewsCursorWrapper cursorWrapper = queryNews(null, null);
-            Log.d("info", "trying to extract news from database");
+            Log.d("info", TAG + "trying to extract news from database");
             try{
                 cursorWrapper.moveToFirst();
                 while(!cursorWrapper.isAfterLast()){
@@ -45,11 +46,11 @@ public class NewsList {
             } finally {
                 cursorWrapper.close();
             }
-            Log.d("info", "--" + mNews.size() + " news extracted from DB");
+            Log.d("info", TAG +  mNews.size() + " news extracted from DB");
         }
         List<NewsItem> newsItems = new ArrayList<>(mNews);
         if (!fromDb){
-            Log.d("info", "--" + mNews.size() + " news extracted from memory");
+            Log.d("info", TAG +  mNews.size() + " news extracted from memory");
         }
         return newsItems;
     }
@@ -69,7 +70,7 @@ public class NewsList {
 
     public void addNews(List<NewsItem> newsItems, boolean toDb){
         String receiver = toDb ? "DB" : "memory";
-        Log.d("info", "adding " + newsItems.size() + " news to" + receiver);
+        Log.d("info", TAG + "adding " + newsItems.size() + " news to " + receiver);
 
         for (NewsItem newsItem : newsItems)
             addNewsItem(newsItem, toDb);

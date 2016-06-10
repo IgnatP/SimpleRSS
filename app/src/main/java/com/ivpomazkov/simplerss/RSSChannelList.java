@@ -37,7 +37,6 @@ public class RSSChannelList {
         String urlId = channel.getUrl();
         ContentValues values = getContentValues(channel);
         mDatabase.update(RSSChannelsTable.NAME, values, RSSChannelsTable.RSSChannelsColumns.URL + " = ?", new String[] {urlId});
-        Log.d("info", "channel updated " + channel.getDescription() + ", URL " + channel.getUrl() + ", " + channel.isActive().toString());
     }
 
     public List<RSSChannel> getChannels(){

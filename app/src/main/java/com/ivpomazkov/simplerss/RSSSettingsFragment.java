@@ -43,7 +43,6 @@ public class RSSSettingsFragment extends Fragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.settings,container,false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.url_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //updateUI();
         return view;
     }
 

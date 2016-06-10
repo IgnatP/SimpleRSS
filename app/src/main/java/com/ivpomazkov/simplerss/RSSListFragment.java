@@ -22,18 +22,20 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import static com.ivpomazkov.simplerss.RSSActivity.*;
+
 /**
  * Created by Ivpomazkov on 31.05.2016.
  */
 public class RSSListFragment extends Fragment {
 
-    private final static String TAG = "RSS";
+    private final static String TAG = "RSSLIST:";
     private ButtonSettingsPressed mButtonSettingsListener;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RSSListRecyclerViewAdapter mAdapter;
-    private NewsList mNewsList;
-    private List<NewsItem> mNewsItemList;
+    //private NewsList mNewsList;
+    //private List<NewsItem> mNewsItemList;
     private BroadcastReceiver mBroadcastReceiver;
 
 
@@ -52,9 +54,9 @@ public class RSSListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        Log.d("info","list->onCreate()");
+        Log.d("info", TAG + "->onCreate()");
         setHasOptionsMenu(true);
-        mNewsList = NewsList.get(getActivity());
+        //RSSActivity.mNewsList = NewsList.get(getActivity());
         mNewsItemList = mNewsList.getNews(true);
     }
 
@@ -64,20 +66,20 @@ public class RSSListFragment extends Fragment {
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("info", "intent UPDATE_ACTION received");
+                Log.d("info", TAG + "intent UPDATE_ACTION received");
                 boolean readyToUpdate = intent.getBooleanExtra(RSSGetter.READY_TO_UPDATE,false);
                 if (readyToUpdate)
                     updateUI();
             }
         };
-        IntentFilter intentFilter = new IntentFilter(RSSActivity.UPDATE_ACTION);
+        IntentFilter intentFilter = new IntentFilter(UPDATE_ACTION);
         getActivity().registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d("info","list->onCreateView()");
+        Log.d("info", TAG + " ->onCreateView()");
         View view = inflater.inflate(R.layout.news_list,container, false);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.news_list_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -103,11 +105,10 @@ public class RSSListFragment extends Fragment {
     public void onStop(){
         super.onStop();
         getActivity().unregisterReceiver(mBroadcastReceiver);
-        mNewsItemList = mNewsList.getNews(false);
-        mNewsList.addNews(mNewsItemList, true);
     }
 
     private void updateUI(){
+        //mNewsItemList = mNewsList.getNews(false);
         mNewsItemList = mNewsList.getNews(false);
         if (mAdapter == null) {
             mAdapter = new RSSListRecyclerViewAdapter(mNewsItemList);
@@ -115,7 +116,7 @@ public class RSSListFragment extends Fragment {
         } else {
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.setNewsList(mNewsItemList);
-            Log.d("info", "size of newsList" + mNewsItemList.size());
+            Log.d("info", TAG + " size of newsList " + mNewsItemList.size());
             mAdapter.notifyDataSetChanged();
         }
 
@@ -135,7 +136,7 @@ public class RSSListFragment extends Fragment {
                     mButtonSettingsListener = (ButtonSettingsPressed) getActivity();
                     mButtonSettingsListener.onButtonSettingsPressed();
                 } catch (ClassCastException e) {
-                    Log.d("info", "Activity " + mButtonSettingsListener.toString() + "isn't host ButtonSettingsPressed");
+                    Log.d("info", TAG +  "Activity " + mButtonSettingsListener.toString() + "isn't host ButtonSettingsPressed");
                 }
                 return true;
             default:
@@ -154,8 +155,6 @@ public class RSSListFragment extends Fragment {
             super(itemView);
             mTitle = (TextView) itemView.findViewById(R.id.news_item_title);
             itemView.setOnClickListener(this);
-            //mDescription = (TextView) itemView.findViewById(R.id.news_item_description);
-            //mPubDate = (TextView) itemView.findViewById(R.id.news_item_pubDate);
         }
 
         public void bind(NewsItem newsItem){
@@ -168,10 +167,10 @@ public class RSSListFragment extends Fragment {
             OpenNewsItem opener;
             try{
                 opener = (OpenNewsItem) getActivity();
-                Log.d("info", "Pressed on " + mNewsItem.getId());
+                Log.d("info", TAG +  "Pressed on " + mNewsItem.getId());
                 opener.onNewsItemPressed(mNewsItem.getId());
             } catch (ClassCastException e){
-                Log.d("info",e.toString());
+                Log.d("info",TAG + e.toString());
             }
         }
     }
@@ -196,8 +195,6 @@ public class RSSListFragment extends Fragment {
         public void onBindViewHolder(RSSListRecyclerViewHolder holder, int position) {
             NewsItem nItem = mNewsList.get(position);
             holder.bind(nItem);
-            //holder.mDescription.setText(nItem.getDescription());
-            //holder.mPubDate.setText(nItem.getPubDate().toString());
         }
 
         @Override

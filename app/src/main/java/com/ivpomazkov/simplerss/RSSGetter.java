@@ -31,8 +31,8 @@ import okhttp3.Response;
  */
 public class RSSGetter extends Service {
     public static final String READY_TO_UPDATE = "update";
-    List<String> mURLs;
-
+    private List<String> mURLs;
+    private static final String TAG = "GETTER:";
 
     public void getNews(){
         List<NewsItem> newsItems = new ArrayList<>();
@@ -42,43 +42,43 @@ public class RSSGetter extends Service {
             public void run() {
                 NewsList newsList = NewsList.get(getApplicationContext());
                 List<String> activeURLs = RSSChannelList.get(getApplicationContext()).getActiveURLs();
-                Log.d("info", "active urls received, " + activeURLs.size());
+                Log.d("info", TAG + " active urls received, " + activeURLs.size());
                 String rssString = "";
                 for (String rssUrl : activeURLs) {
                     //!!get rssString from web
                     rssString = "";
-                    Log.d("info", "creating request to " + rssUrl);
+                    Log.d("info", TAG + " creating request to " + rssUrl);
                     OkHttpClient client = new OkHttpClient();
                     try {
                     Request request = new Request.Builder()
                             .url(rssUrl)
                             .build();
-                        Log.d("info", "executing request to " + rssUrl);
+                        Log.d("info", TAG + " executing request to " + rssUrl);
                         Response response = client.newCall(request).execute();
                         rssString = response.body().string();
-                        Log.d("info","received rss string: " + rssString);
+                        Log.d("info", TAG + " received rss string: " + rssString);
                     } catch (IOException e) {
-                        Log.d("info", e.toString());
+                        Log.d("info", TAG +  e.toString());
                     } catch (IllegalArgumentException e){
-                        Log.d("info", e.toString());
+                        Log.d("info", TAG +  e.toString());
                     }
                     List<NewsItem> itemList = new ArrayList<>();
                     try {
                         //rssString = "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:media=\"http://search.yahoo.com/mrss/\"><channel><title>TUT.BY: Новости ТУТ - Главные новости</title><link>http://news.tut.by/</link><description>TUT.BY: Новости ТУТ - Главные новости</description><language>ru</language><image><url>http://img.tyt.by/i/rss/news/logo.gif</url><title>TUT.BY: Новости ТУТ - Главные новости</title><link>http://news.tut.by/</link></image><pubDate>Mon, 06 Jun 2016 17:28:50 +0300</pubDate><lastBuildDate>Mon, 06 Jun 2016 17:23:00 +0300</lastBuildDate><ttl>5</ttl><atom:link href=\"http://news.tut.by/rss/index.rss\" rel=\"self\" type=\"application/rss+xml\" /><item><title>Серьезное ЧП на \"ГродноАзоте\": два человека погибли, еще двое - в реанимации</title><link>http://news.tut.by/accidents/499345.html?utm_campaign=news-feed&#x26;utm_medium=rss&#x26;utm_source=rss-news</link><description>&#x3C;img src=\"http://img.tyt.by/thumbnails/n/regiony/0c/d/pozhar_azot_2016.jpg\" width=\"72\" height=\"43\" alt=\"Фото: vk.com/autogrodnoby\" border=\"0\" align=\"left\" hspace=\"5\" /&#x3E;Возбуждено уголовное дело по статье 428 УК Беларуси (служебная халатность).&#x3C;br clear=\"all\" /&#x3E;</description></item><item><title>Выборы в Палату представителей назначены на 11 сентября</title><link>http://news.tut.by/politics/499334.html?utm_campaign=news-feed&#x26;utm_medium=rss&#x26;utm_source=rss-news</link><description>&#x3C;img src=\"http://img.tyt.by/thumbnails/n/00/d/nac_sobranye_parlament.jpg\" width=\"72\" height=\"48\" alt=\"Фото: house.gov.by\" border=\"0\" align=\"left\" hspace=\"5\" /&#x3E;Александр Лукашенко 6 июня подписал указы о назначении выборов в обе палаты белорусского парламента - Палату представителей и Совет Республики.&#x3C;br clear=\"all\" /&#x3E;</description></item></channel></rss>";
                         itemList = parseRSSString(rssString);
                     } catch (ParserConfigurationException e){
-                        Log.d("info", "parser exception" + e);
+                        Log.d("info", TAG + " parser exception" + e);
                     }  catch (IOException e){
                         e.printStackTrace();
                     } catch (SAXException e) {
                         e.printStackTrace();
                     }
-                    Log.d("info", "found some news = " + itemList.size());
+                    Log.d("info", TAG + " found some news = " + itemList.size());
                     newsList.addNews(itemList, false);
                 }
                 Intent intent = new Intent(RSSActivity.UPDATE_ACTION);
                 intent.putExtra(RSSGetter.READY_TO_UPDATE,true);
-                Log.d("info", "intent UPDATE_ACTION sent");
+                Log.d("info", TAG + " intent UPDATE_ACTION sent");
                 sendBroadcast(intent);
             }
         }).start();
@@ -114,24 +114,24 @@ public class RSSGetter extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("info", "Service->onBind()");
+        Log.d("info", TAG + " ->onBind()");
         return null;
     }
 
     @Override
     public void onCreate(){
-        Log.d("info", "Service->onCreate()");
+        Log.d("info", TAG + " ->onCreate()");
         mURLs = RSSChannelList.get(getApplicationContext()).getActiveURLs();
     }
 
     @Override
     public void onDestroy(){
-        Log.d("infoService", "Service->onDestroy()");
+        Log.d("info", TAG + " ->onDestroy()");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
-        Log.d("info", "Service->onStartCommand()");
+        Log.d("info", TAG + " ->onStartCommand()");
         getNews();
         return super.onStartCommand(intent, flags, startId);
     }

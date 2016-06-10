@@ -34,10 +34,8 @@ public class NewsItemViewPager extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat){
         super.onCreate(savedInstanceStat);
-        //setContentView(R.layout.news_viewpager);
         View view = inflater.inflate(R.layout.news_viewpager, container, false);
         UUID uuid = (UUID) getArguments().getSerializable(NEWS_ID);
-        Log.d("info", "received UUID " + uuid);
         mViewPager = (ViewPager) view.findViewById(R.id.news_item_detail_viewpager);
         mNewsItemList = NewsList.get(getContext()).getNews(true);
 
@@ -45,7 +43,6 @@ public class NewsItemViewPager extends Fragment {
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
             @Override
             public Fragment getItem(int position) {
-                Log.d("info", "viewPager->getItem, position " + position);
                 NewsItem item = mNewsItemList.get(position);
                 NewsItemFragment fragment = NewsItemFragment.newInstance(item.getId());
                 return fragment;
@@ -56,11 +53,9 @@ public class NewsItemViewPager extends Fragment {
                 return mNewsItemList.size();
             }
         });
-        Log.d("info", "trying to find UUID...");
         for (int i = 0; i < mNewsItemList.size(); i++)
             if (mNewsItemList.get(i).getId().equals(uuid)) {
                 mViewPager.setCurrentItem(i);
-                Log.d("info", "found suitable UUID");
             }
         return view;
     }
