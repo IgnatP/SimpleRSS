@@ -13,6 +13,7 @@ import com.ivpomazkov.simplerss.database.NewsDbSchema.NewsTable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -55,16 +56,24 @@ public class NewsList {
         return newsItems;
     }
 
-    public NewsItem getNewsItem(UUID uuid){
+    public NewsItem getNewsItem(UUID uuid, boolean fromDb){
         NewsItem item = new NewsItem();
-        NewsCursorWrapper cursorWrapper = queryNews(NewsTable.Cols.UUID + " = ?", new String[]{uuid.toString()});
-        try{
-            cursorWrapper.moveToFirst();
-            item = cursorWrapper.getNewsItem();
-        } finally {
-            cursorWrapper.close();
+        if (fromDb) {
+            NewsCursorWrapper cursorWrapper = queryNews(NewsTable.Cols.UUID + " = ?", new String[]{uuid.toString()});
+            try {
+                cursorWrapper.moveToFirst();
+                item = cursorWrapper.getNewsItem();
+            } finally {
+                cursorWrapper.close();
+            }
+        } else {
+            Iterator<NewsItem> iterator = mNews.iterator();
+            while (iterator.hasNext()) {
+                item = iterator.next();
+                if (item.getId().equals(uuid))
+                    break;
+            }
         }
-
         return item;
     }
 
@@ -98,6 +107,7 @@ public class NewsList {
         values.put(NewsTable.Cols.TITLE, item.getTitle());
         values.put(NewsTable.Cols.DESCRIPTION, item.getDescription());
         values.put(NewsTable.Cols.LINK, item.getLink());
+        values.put(NewsTable.Cols.IMAGE_LINK, item.getImageLink());
         values.put(NewsTable.Cols.PUBLICATION_DATE, item.getPubDate().getTime());
         return values;
     }

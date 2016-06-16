@@ -24,6 +24,7 @@ public class NewsDbHelper extends SQLiteOpenHelper {
         NewsTable.Cols.TITLE + ", " +
         NewsTable.Cols.DESCRIPTION + ", " +
         NewsTable.Cols.LINK + ", " +
+        NewsTable.Cols.IMAGE_LINK + ", " +
         NewsTable.Cols.PUBLICATION_DATE + ")");
     }
 

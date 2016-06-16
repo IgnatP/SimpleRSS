@@ -16,7 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -148,18 +151,24 @@ public class RSSListFragment extends Fragment {
     implements View.OnClickListener{
         private NewsItem mNewsItem;
         private TextView mTitle;
-        private TextView mDescription;
-        private TextView mPubDate;
+        private ImageView mImageView;
 
         public RSSListRecyclerViewHolder(View itemView) {
             super(itemView);
             mTitle = (TextView) itemView.findViewById(R.id.news_item_title);
+            mImageView = (ImageView) itemView.findViewById(R.id.news_item_image);
             itemView.setOnClickListener(this);
         }
 
         public void bind(NewsItem newsItem){
             mNewsItem = newsItem;
             mTitle.setText(newsItem.getTitle());
+            Log.d("info", TAG + "trying to load image");
+            Picasso.with(getContext())
+                    .load(mNewsItem.getImageLink())
+                    .placeholder(R.drawable.ic_loading_image)
+                    .error(R.drawable.ic_image_load_fail)
+                    .into(mImageView);
         }
 
         @Override

@@ -18,6 +18,7 @@ import java.util.UUID;
  * Created by Ivpomazkov on 09.06.2016.
  */
 public class NewsItemViewPager extends Fragment {
+    public static final String TAG = "VIEWPAGER";
     private static final String NEWS_ID = "newsId";
     private ViewPager mViewPager;
     private List<NewsItem> mNewsItemList;
@@ -34,10 +35,12 @@ public class NewsItemViewPager extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat){
         super.onCreate(savedInstanceStat);
+
         View view = inflater.inflate(R.layout.news_viewpager, container, false);
         UUID uuid = (UUID) getArguments().getSerializable(NEWS_ID);
+        Log.d(TAG, "onCreateView, id = " + uuid);
         mViewPager = (ViewPager) view.findViewById(R.id.news_item_detail_viewpager);
-        mNewsItemList = NewsList.get(getContext()).getNews(true);
+        mNewsItemList = NewsList.get(getContext()).getNews(false);
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {

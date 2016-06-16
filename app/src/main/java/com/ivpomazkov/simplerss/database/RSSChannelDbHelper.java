@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.ivpomazkov.simplerss.RSSChannel;
 import com.ivpomazkov.simplerss.database.RSSChannelDbSchema.RSSChannelsTable;
 
 /**
@@ -20,6 +21,7 @@ public class RSSChannelDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + RSSChannelsTable.NAME + "("+
                     " _id integer primary key autoincrement, " +
+                        RSSChannelsTable.RSSChannelsColumns.UUID + ", " +
                         RSSChannelsTable.RSSChannelsColumns.URL + ", " +
                         RSSChannelsTable.RSSChannelsColumns.DESCRIPTION + ", " +
                         RSSChannelsTable.RSSChannelsColumns.ISACTIVE + ")"

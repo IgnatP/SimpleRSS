@@ -1,5 +1,7 @@
 package com.ivpomazkov.simplerss;
 
+import android.util.Log;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -11,6 +13,7 @@ public class NewsItem implements Comparable<NewsItem>{
     private String title;
     private String description;
     private String link;
+    private String imageLink;
     private Date pubDate;
 
     public NewsItem(){
@@ -66,18 +69,26 @@ public class NewsItem implements Comparable<NewsItem>{
         return id;
     }
 
-    @Override
-    public boolean equals(Object o){
-        return o instanceof NewsItem &&
-                title.equals(((NewsItem)o).getTitle()) &&
-                pubDate.equals( ((NewsItem)o).getPubDate() );
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     @Override
     public int compareTo(NewsItem another) {
-        if ( title.equals(another.getTitle()) && pubDate.equals(another.getPubDate()))
+        Log.d("info", "comparing " + title + "with " + another.getTitle());
+        Log.d("info", "comparing " + pubDate + "with " + another.getPubDate());
+        int titleCompare = title.compareTo(another.getTitle());
+        int dateCompare = another.getPubDate().compareTo(pubDate);
+        if (( titleCompare == dateCompare) && (titleCompare == 0) )
             return 0;
         else
-            return another.getPubDate().compareTo(pubDate);
+            if  ( dateCompare != 0)
+                return  dateCompare;
+            else return titleCompare;
+       //return title.compareTo(another.getTitle());
     }
 }

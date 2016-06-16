@@ -8,9 +8,9 @@
     android:layout_height="wrap_content"
     android:id="@+id/news_detail_title"
     />
-<TextView
+<WebView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/news_detail_description"
+    android:id="@+id/news_detail_webview"
     />
 </LinearLayout>

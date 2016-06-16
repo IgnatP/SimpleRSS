@@ -39,6 +39,10 @@ public class RSSChannelList {
         mDatabase.update(RSSChannelsTable.NAME, values, RSSChannelsTable.RSSChannelsColumns.URL + " = ?", new String[] {urlId});
     }
 
+    public void deleteChannel(RSSChannel channel){
+        mDatabase.delete(RSSChannelsTable.NAME, RSSChannelsTable.RSSChannelsColumns.UUID + " = ?", new String[] {channel.getUUID().toString()});
+    }
+
     public List<RSSChannel> getChannels(){
         mChannels = new ArrayList<>();
         RSSChannelCursorWrapper cursor = queryChannels(null, null);
@@ -52,6 +56,10 @@ public class RSSChannelList {
             cursor.close();
         }
         return mChannels;
+    }
+
+    public int getSize(){
+        return mChannels.size();
     }
 
     public List<String> getActiveURLs() {
@@ -90,6 +98,7 @@ public class RSSChannelList {
 
     private static ContentValues getContentValues(RSSChannel channel){
         ContentValues values = new ContentValues();
+        values.put(RSSChannelsTable.RSSChannelsColumns.UUID, channel.getUUID().toString());
         values.put(RSSChannelsTable.RSSChannelsColumns.DESCRIPTION, channel.getDescription());
         values.put(RSSChannelsTable.RSSChannelsColumns.URL, channel.getUrl());
         values.put(RSSChannelsTable.RSSChannelsColumns.ISACTIVE, channel.isActive() ? 1 : 0);

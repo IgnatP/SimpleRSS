@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +45,8 @@ public class RSSSettingsFragment extends Fragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.settings,container,false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.url_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         return view;
     }
 
@@ -50,7 +54,9 @@ public class RSSSettingsFragment extends Fragment {
         if (mAdapter == null) {
             mAdapter = new ChannelRVAdapter(mRSSChannelList.getChannels());
             mRecyclerView.setAdapter(mAdapter);
-
+            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(mRecyclerView);
         } else {
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.setChannels(mRSSChannelList.getChannels());
@@ -97,6 +103,7 @@ public class RSSSettingsFragment extends Fragment {
                     channel.setDescription(temp);
                     channel.setActive(false);
                     mRSSChannelList.addChannel(channel);
+                    mAdapter.notifyItemInserted(mRSSChannelList.getSize());
                     updateUI();
                 }
                 break;
@@ -128,7 +135,8 @@ public class RSSSettingsFragment extends Fragment {
         }
     }
 
-    private class ChannelRVAdapter extends RecyclerView.Adapter<ChannelViewHolder>{
+    private class ChannelRVAdapter extends RecyclerView.Adapter<ChannelViewHolder>
+    implements ItemTouchHelperAdapter{
         private List<RSSChannel> mChannels;
 
         public ChannelRVAdapter(List<RSSChannel> channels){ mChannels = channels; }
@@ -152,6 +160,18 @@ public class RSSSettingsFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mChannels.size();
+        }
+
+        @Override
+        public void onItemMove(int fromPosition, int toPosition) {
+
+        }
+
+        @Override
+        public void onItemDismiss(int position) {
+            mRSSChannelList.deleteChannel(mChannels.get(position));
+            mChannels.remove(position);
+            notifyItemRemoved(position);
         }
     }
 
