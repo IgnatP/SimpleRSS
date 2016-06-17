@@ -21,7 +21,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,7 +41,6 @@ public class RSSGetter extends Service {
     private static final String TAG = "GETTER:";
 
     public void getNews(){
-        List<NewsItem> newsItems = new ArrayList<>();
 
         new Thread(new Runnable() {
             @Override
@@ -50,7 +48,7 @@ public class RSSGetter extends Service {
                 NewsList newsList = NewsList.get(getApplicationContext());
                 List<String> activeURLs = RSSChannelList.get(getApplicationContext()).getActiveURLs();
                 Log.d("info", TAG + " active urls received, " + activeURLs.size());
-                String rssString = "";
+                String rssString;
                 for (String rssUrl : activeURLs) {
                     rssString = "";
                     Log.d("info", TAG + " creating request to " + rssUrl);
@@ -63,9 +61,7 @@ public class RSSGetter extends Service {
                         Response response = client.newCall(request).execute();
                         rssString = response.body().string();
                         Log.d("info", TAG + " received rss string: " + rssString);
-                    } catch (IOException e) {
-                        Log.d("info", TAG +  e.toString());
-                    } catch (IllegalArgumentException e){
+                    } catch (IOException | IllegalArgumentException e) {
                         Log.d("info", TAG +  e.toString());
                     }
                     List<NewsItem> itemList = new ArrayList<>();
@@ -74,9 +70,7 @@ public class RSSGetter extends Service {
                         itemList = parseRSSString(rssString);
                     } catch (ParserConfigurationException e){
                         Log.d("info", TAG + " parser exception" + e);
-                    }  catch (IOException e){
-                        e.printStackTrace();
-                    } catch (SAXException e) {
+                    }  catch (IOException | SAXException e){
                         e.printStackTrace();
                     }
                     Log.d("info", TAG + " found some news = " + itemList.size());

@@ -8,11 +8,9 @@ import android.util.Log;
 
 import com.ivpomazkov.simplerss.database.NewsCursorWrapper;
 import com.ivpomazkov.simplerss.database.NewsDbHelper;
-import com.ivpomazkov.simplerss.database.NewsDbSchema;
 import com.ivpomazkov.simplerss.database.NewsDbSchema.NewsTable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -67,9 +65,8 @@ public class NewsList {
                 cursorWrapper.close();
             }
         } else {
-            Iterator<NewsItem> iterator = mNews.iterator();
-            while (iterator.hasNext()) {
-                item = iterator.next();
+            for (NewsItem mNew : mNews) {
+                item = mNew;
                 if (item.getId().equals(uuid))
                     break;
             }
@@ -80,7 +77,6 @@ public class NewsList {
     public void addNews(List<NewsItem> newsItems, boolean toDb){
         String receiver = toDb ? "DB" : "memory";
         Log.d("info", TAG + "adding " + newsItems.size() + " news to " + receiver);
-
         for (NewsItem newsItem : newsItems)
             addNewsItem(newsItem, toDb);
     }

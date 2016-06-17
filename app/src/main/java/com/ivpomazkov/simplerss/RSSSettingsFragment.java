@@ -8,7 +8,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -93,7 +92,7 @@ public class RSSSettingsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         switch(requestCode){
             case URLPICKER:
-                Bundle bundle = null;
+                Bundle bundle;
                 if (resultCode == Activity.RESULT_OK){
                     bundle = data.getExtras();
                     String temp = bundle.getString(REQUESTURL);
@@ -146,15 +145,12 @@ public class RSSSettingsFragment extends Fragment {
         @Override
         public ChannelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(getActivity()).inflate(R.layout.settings_item, parent, false);
-            ChannelViewHolder uvh = new ChannelViewHolder(v);
-            return uvh;
+            return new ChannelViewHolder(v);
         }
 
         @Override
         public void onBindViewHolder(ChannelViewHolder holder, int position) {
-            RSSChannel channel = new RSSChannel();
-            channel = mChannels.get(position);
-            holder.bindChannel(channel);
+            holder.bindChannel(mChannels.get(position));
         }
 
         @Override

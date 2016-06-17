@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-import com.ivpomazkov.simplerss.R;
-
 import java.util.UUID;
 
 /**
@@ -17,7 +15,6 @@ import java.util.UUID;
  */
 public class NewsItemFragment extends Fragment {
     private TextView mTitle;
-
     private WebView mWebView;
     private static String ARG_NEWS_ID = "newsItemUUID";
 

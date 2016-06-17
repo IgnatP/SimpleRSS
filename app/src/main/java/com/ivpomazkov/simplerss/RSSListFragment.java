@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.TreeSet;
 import java.util.UUID;
 
 import static com.ivpomazkov.simplerss.RSSActivity.*;
@@ -37,8 +36,6 @@ public class RSSListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RSSListRecyclerViewAdapter mAdapter;
-    //private NewsList mNewsList;
-    //private List<NewsItem> mNewsItemList;
     private BroadcastReceiver mBroadcastReceiver;
 
 
@@ -59,7 +56,6 @@ public class RSSListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("info", TAG + "->onCreate()");
         setHasOptionsMenu(true);
-        //RSSActivity.mNewsList = NewsList.get(getActivity());
         mNewsItemList = mNewsList.getNews(true);
     }
 
@@ -111,7 +107,6 @@ public class RSSListFragment extends Fragment {
     }
 
     private void updateUI(){
-        //mNewsItemList = mNewsList.getNews(false);
         mNewsItemList = mNewsList.getNews(false);
         if (mAdapter == null) {
             mAdapter = new RSSListRecyclerViewAdapter(mNewsItemList);
@@ -163,7 +158,6 @@ public class RSSListFragment extends Fragment {
         public void bind(NewsItem newsItem){
             mNewsItem = newsItem;
             mTitle.setText(newsItem.getTitle());
-            Log.d("info", TAG + "trying to load image");
             Picasso.with(getContext())
                     .load(mNewsItem.getImageLink())
                     .placeholder(R.drawable.ic_loading_image)
@@ -176,7 +170,6 @@ public class RSSListFragment extends Fragment {
             OpenNewsItem opener;
             try{
                 opener = (OpenNewsItem) getActivity();
-                Log.d("info", TAG +  "Pressed on " + mNewsItem.getId());
                 opener.onNewsItemPressed(mNewsItem.getId());
             } catch (ClassCastException e){
                 Log.d("info",TAG + e.toString());
@@ -196,8 +189,7 @@ public class RSSListFragment extends Fragment {
         @Override
         public RSSListRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(getContext()).inflate(R.layout.news_item,parent, false);
-            RSSListRecyclerViewHolder vh = new RSSListRecyclerViewHolder(v);
-            return vh;
+            return new RSSListRecyclerViewHolder(v);
         }
 
         @Override

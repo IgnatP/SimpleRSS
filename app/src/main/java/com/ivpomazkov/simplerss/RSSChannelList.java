@@ -4,11 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.ivpomazkov.simplerss.database.RSSChannelCursorWrapper;
 import com.ivpomazkov.simplerss.database.RSSChannelDbHelper;
-import com.ivpomazkov.simplerss.database.RSSChannelDbSchema;
 import com.ivpomazkov.simplerss.database.RSSChannelDbSchema.RSSChannelsTable;
 
 import java.util.ArrayList;
